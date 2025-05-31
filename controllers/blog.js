@@ -2,6 +2,8 @@ const router = require('express').Router()
 
 const { Blog } = require('../models')
 
+const asyncHandler = require('../util/asyncHandler')
+
 const blogFinder = async (req, res, next) => {
     req.blog = await Blog.findByPk(req.params.id)
     next()
