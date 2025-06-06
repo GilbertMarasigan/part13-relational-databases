@@ -54,10 +54,17 @@ router.get('/:id', blogFinder, async (req, res) => {
     }
 })
 
-router.delete('/:id', blogFinder, async (req, res) => {
-    if (req.blog) {
-        await req.blog.destroy()
+router.delete('/:id', tokenExtractor, blogFinder, async (req, res) => {
+    if (!req.blog) {
+        return res.status(404).json({ error: 'Blog not found' })
     }
+
+    // Check if logged-in user is the owner
+    if (req.blog.userId !== req.decodedToken.id) {
+        return res.status(403).json({ error: 'You are not allowed to delete this blog' })
+    }
+
+    await req.blog.destroy()
     res.status(204).end()
 })
 
