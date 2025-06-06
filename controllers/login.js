@@ -5,6 +5,9 @@ const { SECRET } = require('../util/config')
 const User = require('../models/user')
 
 router.post('/', async (request, response) => {
+
+    console.log('endpoint working');
+
     const body = request.body
 
     const user = await User.findOne({

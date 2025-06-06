@@ -1,6 +1,8 @@
 const router = require('express').Router()
+const jwt = require('jsonwebtoken')
 
-const { Blog } = require('../models')
+const { Blog, User } = require('../models')
+const { SECRET } = require('../util/config')
 
 const asyncHandler = require('../util/asyncHandler')
 
@@ -10,13 +12,34 @@ const blogFinder = async (req, res, next) => {
 }
 
 router.get('/', async (req, res) => {
-    const blogs = await Blog.findAll()
+    const blogs = await Blog.findAll({
+        include: {
+            model: User,
+            attributes: ['username', 'name'] // optional
+        }
+    })
     res.json(blogs)
 })
 
-router.post('/', async (req, res) => {
+const tokenExtractor = (req, res, next) => {
+    const authorization = req.get('authorization')
+    if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+        try {
+            req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+        } catch (error) {
+            return res.status(401).json({ error: 'token invalid' })
+        }
+    } else {
+        return res.status(401).json({ error: 'token missing' })
+    }
+    next()
+}
+
+
+router.post('/', tokenExtractor, async (req, res) => {
     try {
-        const blog = await Blog.create(req.body)
+        const user = await User.findByPk(req.decodedToken.id)
+        const blog = await Blog.create({ ...req.body, userId: user.id, date: new Date() })
         res.json(blog)
     } catch (error) {
         return res.status(400).json({ error })
