@@ -22,9 +22,18 @@ User.init({
         type: DataTypes.STRING,
         allowNull: false
     },
+    admin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    disabled: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
 }, {
     sequelize,
     underscored: true,
+    timestamps: true,
     modelName: 'user'
 })
 

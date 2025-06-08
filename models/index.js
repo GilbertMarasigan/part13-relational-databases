@@ -1,6 +1,9 @@
 const Note = require('./note')
 const Blog = require('./blog')
 const User = require('./user')
+const Team = require('./team')
+const Membership = require('./membership')
+const UserNotes = require('./user_notes')
 
 User.hasMany(Note)
 Note.belongsTo(User)
@@ -8,16 +11,16 @@ Note.belongsTo(User)
 User.hasMany(Blog)
 Blog.belongsTo(User)
 
-const syncModels = async () => {
-    await User.sync({ alter: true })
-    await Note.sync({ alter: true })
-    await Blog.sync({ alter: true })
-}
+User.belongsToMany(Team, { through: Membership })
+Team.belongsToMany(User, { through: Membership })
 
-syncModels()
+User.belongsToMany(Note, { through: UserNotes, as: 'marked_notes' })
+Note.belongsToMany(User, { through: UserNotes, as: 'users_marked' })
 
 module.exports = {
     Note,
     Blog,
-    User
+    User,
+    Team,
+    Membership
 }

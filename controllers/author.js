@@ -3,10 +3,6 @@ const router = require('express').Router()
 const { Blog, } = require('../models')
 const { fn, col } = require('sequelize')
 
-const blogFinder = async (req, res, next) => {
-    req.blog = await Blog.findByPk(req.params.id)
-    next()
-}
 
 router.get('/', async (req, res) => {
 
