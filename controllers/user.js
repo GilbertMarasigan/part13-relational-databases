@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const { tokenExtractor } = require('../util/middleware')
 
-const { User, Note, Team, Blog } = require('../models')
+const { User, Note, Team, Blog, ReadingList } = require('../models')
 
 router.get('/', async (req, res) => {
     const users = await User.findAll({
@@ -48,6 +48,14 @@ router.get('/:id', async (req, res) => {
                 attributes: []
             }
         },
+        {
+            model: Blog,
+            as: 'readings',
+            attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
+            through: {
+                attributes: ['read', 'id']
+            }
+        }
         ]
     })
 

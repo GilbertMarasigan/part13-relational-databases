@@ -8,10 +8,10 @@ module.exports = {
                 primaryKey: true,
                 autoIncrement: true
             },
-            state: {
-                type: DataTypes.TEXT,
+            read: {
+                type: DataTypes.BOOLEAN,
                 allowNull: false,
-                defaultValue: 'unread'
+                defaultValue: false
             },
             user_id: {
                 type: DataTypes.INTEGER,
@@ -24,6 +24,10 @@ module.exports = {
                 references: { model: 'blogs', key: 'id' },
             },
         })
+        // await queryInterface.addColumn('blogs', 'year', {
+        //     type: DataTypes.INTEGER,
+        //     allowNull: true
+        // })
     },
     down: async ({ context: queryInterface }) => {
         await queryInterface.dropTable('readinglists')
